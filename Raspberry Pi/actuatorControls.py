@@ -1,22 +1,17 @@
-import RPi.GPIO as GPIO
+from os import system
 import time
 from datetime import datetime
 import requests
 
 waterUrl = 'https://speeve-ponics.herokuapp.com/conditions/watering'
 
-light = 2
-motor = 3
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
-GPIO.setup(motor, GPIO.OUT)
-GPIO.setup(light, GPIO.OUT)
-
+light = 3
+motor = 5
+for i in [light, motor]:
+    system('gpio -1 mode '+str(i)+' out')
 
 def motorOn():
-    GPIO.output(motor, True)
+    system('gpio -1 write '+str(motor)+' 1')
 
     data = {
         "timestamp": datetime.now(),
@@ -29,9 +24,9 @@ def motorOn():
 
 def motorOff(condition = ''):
     if condition is "initial":
-        GPIO.output(motor, False)
+        system('gpio -1 write '+str(motor)+' 0')
     else:
-        GPIO.output(motor, False)
+        system('gpio -1 write '+str(motor)+' 0')
 
         data = {
             "timestamp": datetime.now(),
@@ -43,7 +38,7 @@ def motorOff(condition = ''):
         r = requests.post(waterUrl, data)
 
 def lightOn():
-    GPIO.output(light, True)
+    system('gpio -1 write '+str(light)+' 1')
 
 def lightOff():
-    GPIO.output(light, False)
+    system('gpio -1 write '+str(light)+' 0')
